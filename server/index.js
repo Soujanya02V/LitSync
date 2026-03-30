@@ -3,7 +3,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
 import folderRoutes from "./Routes/folderRoutes.js";
-import cloudinary from "./utils/cloudinary.js";
+import paperRoutes from "./Routes/PaperRoutes.js";
 dotenv.config();
 // console.log("Cloudinary ready:", cloudinary.config().cloud_name);
 mongoose
@@ -21,6 +21,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/folders", folderRoutes);
+app.use("/papers", paperRoutes);
 
 const PORT = process.env.PORT || 5000;
 
