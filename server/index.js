@@ -3,9 +3,9 @@ import cors from "cors";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
 import folderRoutes from "./Routes/folderRoutes.js";
-
+import cloudinary from "./utils/cloudinary.js";
 dotenv.config();
-
+// console.log("Cloudinary ready:", cloudinary.config().cloud_name);
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => console.log("DB Connected"))
