@@ -21,7 +21,7 @@ function App() {
 
   useEffect(() => {
     loadFolders();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+ 
   }, []);
 
   const handleCreate = async () => {
