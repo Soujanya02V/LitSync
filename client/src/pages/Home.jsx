@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import { createFolder, getFolders } from "../api/folderApi";
+import { createFolder, deleteFolder, getFolders } from "../api/folderApi";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 function Home() {
   const [folderName, setFolderName] = useState("");
@@ -41,6 +42,48 @@ function Home() {
     }
   };
 
+  const performDeleteFolder = async (folder) => {
+    const loadingId = toast.loading("Deleting folder…");
+    try {
+      await deleteFolder(folder._id);
+      setFolders((prev) => prev.filter((f) => f._id !== folder._id));
+      toast.dismiss(loadingId);
+      toast.success(`Folder "${folder.name}" was deleted.`);
+    } catch (err) {
+      toast.dismiss(loadingId);
+      const msg =
+        err?.response?.data?.message || err?.message || "Failed to delete folder";
+      toast.error(msg);
+    }
+  };
+
+  const openDeleteConfirmToast = (folder) => {
+    toast(
+      (t) => (
+        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+          <span>
+            Delete folder &quot;{folder.name}&quot;? Papers in this folder will be removed.
+          </span>
+          <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
+            <button type="button" onClick={() => toast.dismiss(t.id)}>
+              Cancel
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                toast.dismiss(t.id);
+                void performDeleteFolder(folder);
+              }}
+            >
+              Delete
+            </button>
+          </div>
+        </div>
+      ),
+      { duration: Infinity, id: `confirm-delete-folder-${folder._id}` }
+    );
+  };
+
   return (
     <div style={{ padding: "20px" }}>
       <h1>LitSync</h1>
@@ -63,14 +106,40 @@ function Home() {
 
       <h2 style={{ marginTop: 20 }}>Folders</h2>
 
-      <ul>
+      <ul style={{ listStyle: "none", padding: 0 }}>
         {folders.map((folder) => (
           <li
             key={folder._id}
-            style={{ cursor: "pointer", margin: "8px 0" }}
-            onClick={() => navigate(`/folder/${folder._id}`)}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 12,
+              margin: "8px 0",
+            }}
           >
-            {folder.name}
+            <span
+              role="button"
+              tabIndex={0}
+              onClick={() => navigate(`/folder/${folder._id}`)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  navigate(`/folder/${folder._id}`);
+                }
+              }}
+              style={{ cursor: "pointer", flex: 1 }}
+            >
+              {folder.name}
+            </span>
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                openDeleteConfirmToast(folder);
+              }}
+            >
+              Delete
+            </button>
           </li>
         ))}
       </ul>
