@@ -14,6 +14,35 @@ function addFlAttachmentFalse(url) {
   return url.includes("?") ? `${url}&fl_attachment=false` : `${url}?fl_attachment=false`;
 }
 
+function optionalTrimmedString(value) {
+  if (value == null) return undefined;
+  const s = String(value).trim();
+  return s === "" ? undefined : s;
+}
+
+function parseKeywords(raw) {
+  if (raw == null || raw === "") return [];
+  if (Array.isArray(raw)) {
+    return raw.map((k) => String(k).trim()).filter(Boolean);
+  }
+  if (typeof raw === "string") {
+    const trimmed = raw.trim();
+    if (!trimmed) return [];
+    if (trimmed.startsWith("[")) {
+      try {
+        const parsed = JSON.parse(trimmed);
+        if (Array.isArray(parsed)) {
+          return parsed.map((k) => String(k).trim()).filter(Boolean);
+        }
+      } catch {
+        // treat as plain text / comma-separated
+      }
+    }
+    return trimmed.split(",").map((k) => k.trim()).filter(Boolean);
+  }
+  return [];
+}
+
 async function uploadRawBufferToCloudinary(buffer, originalFilename) {
   return await new Promise((resolve, reject) => {
     const cloudinaryStream = cloudinary.uploader.upload_stream(
@@ -46,6 +75,10 @@ router.post("/", upload.single("file"), async (req, res) => {
     }
 
     const title = req.file.originalname;
+    const authors = optionalTrimmedString(req.body?.authors);
+    const year = optionalTrimmedString(req.body?.year);
+    const summary = optionalTrimmedString(req.body?.summary);
+    const keywords = parseKeywords(req.body?.keywords);
 
     const uploadResult = await uploadRawBufferToCloudinary(req.file.buffer, req.file.originalname);
 
@@ -65,6 +98,10 @@ router.post("/", upload.single("file"), async (req, res) => {
       publicId,
       resourceType,
       folderId,
+      authors,
+      year,
+      summary,
+      keywords,
     });
 
     return res.status(201).json(paper);
