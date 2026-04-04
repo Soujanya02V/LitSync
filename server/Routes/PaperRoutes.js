@@ -63,7 +63,7 @@ async function uploadRawBufferToCloudinary(buffer, originalFilename) {
   });
 }
 
-router.post("/", upload.single("file"), async (req, res) => {
+async function handlePaperUpload(req, res) {
   try {
     if (!req.file) {
       return res.status(400).json({ message: "File is required (field: file)" });
@@ -108,7 +108,10 @@ router.post("/", upload.single("file"), async (req, res) => {
   } catch (err) {
     return res.status(500).json({ message: err?.message || "Upload failed" });
   }
-});
+}
+
+router.post("/upload", upload.single("file"), handlePaperUpload);
+router.post("/", upload.single("file"), handlePaperUpload);
 
 function extractPublicIdFromRawUrl(url) {
   if (!url) return "";
