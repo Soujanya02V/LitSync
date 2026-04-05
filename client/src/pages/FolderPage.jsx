@@ -180,7 +180,7 @@ function FolderPage() {
   };
 
   return (
-    <div style={{ padding: "20px", paddingTop: 56, maxWidth: 640 }}>
+    <div style={{ padding: "20px", paddingTop: 56, maxWidth: showTable ? "100%" : 640 }}>
       <button
         onClick={() => navigate("/")}
         style={{ position: "absolute", top: 10, left: 10 }}
@@ -528,10 +528,26 @@ function FolderPage() {
 
       {showTable && (
         <div style={{ marginTop: 16 }}>
+          <button
+            onClick={() => setShowTable(false)}
+            style={{
+              marginBottom: 12,
+              padding: "10px 18px",
+              borderRadius: 8,
+              border: "1px solid #ccd",
+              background: "#f7f8fb",
+              color: "#334155",
+              fontSize: 14,
+              cursor: "pointer",
+            }}
+          >
+            Back to Papers
+          </button>
           <div style={{ overflowX: "auto" }}>
             <table
               style={{
                 width: "100%",
+                minWidth: 980,
                 borderCollapse: "collapse",
                 background: "#fff",
                 border: "1px solid #e5e7eb",
