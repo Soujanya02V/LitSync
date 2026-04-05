@@ -46,9 +46,15 @@ function FolderPage() {
   const [authors, setAuthors] = useState("");
   const [year, setYear] = useState("");
   const [summary, setSummary] = useState("");
+  const [methodology, setMethodology] = useState("");
+  const [advantages, setAdvantages] = useState("");
+  const [disadvantages, setDisadvantages] = useState("");
+  const [limitations, setLimitations] = useState("");
+  const [futureScope, setFutureScope] = useState("");
   const [keywords, setKeywords] = useState("");
   const [showForm, setShowForm] = useState(false);
   const [editPaper, setEditPaper] = useState(null);
+  const [showTable, setShowTable] = useState(false);
   const [expandedPaper, setExpandedPaper] = useState({});
 
   const fileInputRef = useRef(null);
@@ -77,6 +83,11 @@ function FolderPage() {
     setAuthors("");
     setYear("");
     setSummary("");
+    setMethodology("");
+    setAdvantages("");
+    setDisadvantages("");
+    setLimitations("");
+    setFutureScope("");
     setKeywords("");
     setEditPaper(null);
     setShowForm(false);
@@ -88,6 +99,11 @@ function FolderPage() {
     setAuthors(paper?.authors || "");
     setYear(paper?.year || "");
     setSummary(paper?.summary || "");
+    setMethodology(paper?.methodology || "");
+    setAdvantages(paper?.advantages || "");
+    setDisadvantages(paper?.disadvantages || "");
+    setLimitations(paper?.limitations || "");
+    setFutureScope(paper?.futureScope || "");
     setKeywords(formatKeywordsLine(paper));
     setShowForm(true);
   };
@@ -116,6 +132,11 @@ function FolderPage() {
           authors,
           year,
           summary,
+          methodology,
+          advantages,
+          disadvantages,
+          limitations,
+          futureScope,
           keywords,
         });
 
@@ -135,6 +156,11 @@ function FolderPage() {
       formData.append("authors", withMetadata ? authors : "");
       formData.append("year", withMetadata ? year : "");
       formData.append("summary", withMetadata ? summary : "");
+      formData.append("methodology", withMetadata ? methodology : "");
+      formData.append("advantages", withMetadata ? advantages : "");
+      formData.append("disadvantages", withMetadata ? disadvantages : "");
+      formData.append("limitations", withMetadata ? limitations : "");
+      formData.append("futureScope", withMetadata ? futureScope : "");
       appendKeywordsField(formData, withMetadata ? keywords : "");
 
       const res = await axios.post(`${backendApi}/papers/upload`, formData);
@@ -174,6 +200,12 @@ function FolderPage() {
         style={{ position: "absolute", top: 10, right: 10 }}
       >
         Choose file
+      </button>
+      <button
+        onClick={() => setShowTable((prev) => !prev)}
+        style={{ position: "absolute", top: 48, right: 10 }}
+      >
+        {showTable ? "Show Cards" : "Table View"}
       </button>
   
       <h1>Folder</h1>
@@ -267,6 +299,86 @@ function FolderPage() {
                   transition: "box-shadow 0.15s",
                   color: "#111",
                 }}
+                placeholder="Methodology"
+                value={methodology}
+                onChange={(e) => setMethodology(e.target.value)}
+              />
+              <input
+                style={{
+                  padding: "12px",
+                  borderRadius: 8,
+                  border: "1px solid #bbb",
+                  outline: "none",
+                  fontSize: 16,
+                  marginBottom: 0,
+                  background: "#fafbfc",
+                  transition: "box-shadow 0.15s",
+                  color: "#111",
+                }}
+                placeholder="Advantages"
+                value={advantages}
+                onChange={(e) => setAdvantages(e.target.value)}
+              />
+              <input
+                style={{
+                  padding: "12px",
+                  borderRadius: 8,
+                  border: "1px solid #bbb",
+                  outline: "none",
+                  fontSize: 16,
+                  marginBottom: 0,
+                  background: "#fafbfc",
+                  transition: "box-shadow 0.15s",
+                  color: "#111",
+                }}
+                placeholder="Disadvantages"
+                value={disadvantages}
+                onChange={(e) => setDisadvantages(e.target.value)}
+              />
+              <input
+                style={{
+                  padding: "12px",
+                  borderRadius: 8,
+                  border: "1px solid #bbb",
+                  outline: "none",
+                  fontSize: 16,
+                  marginBottom: 0,
+                  background: "#fafbfc",
+                  transition: "box-shadow 0.15s",
+                  color: "#111",
+                }}
+                placeholder="Limitations"
+                value={limitations}
+                onChange={(e) => setLimitations(e.target.value)}
+              />
+              <input
+                style={{
+                  padding: "12px",
+                  borderRadius: 8,
+                  border: "1px solid #bbb",
+                  outline: "none",
+                  fontSize: 16,
+                  marginBottom: 0,
+                  background: "#fafbfc",
+                  transition: "box-shadow 0.15s",
+                  color: "#111",
+                }}
+                placeholder="Future Scope"
+                value={futureScope}
+                onChange={(e) => setFutureScope(e.target.value)}
+              />
+              <input
+                style={{
+                  padding: "12px",
+                  borderRadius: 8,
+                  border: "1px solid #bbb",
+                  outline: "none",
+                  fontSize: 16,
+                  marginBottom: 0,
+                  background: "#fafbfc",
+                  transition: "box-shadow 0.15s",
+                  color: "#111",
+                }}
                 placeholder="Keywords"
                 value={keywords}
                 onChange={(e) => setKeywords(e.target.value)}
@@ -313,6 +425,7 @@ function FolderPage() {
       )}
 
   
+      {!showTable && (
       <ul style={{ listStyle: "none", padding: 0 }}>
         {papers.map((paper, index) => {
           const key = paper._id || index;
@@ -411,6 +524,65 @@ function FolderPage() {
           );
         })}
       </ul>
+      )}
+
+      {showTable && (
+        <div style={{ marginTop: 16 }}>
+          <div style={{ overflowX: "auto" }}>
+            <table
+              style={{
+                width: "100%",
+                borderCollapse: "collapse",
+                background: "#fff",
+                border: "1px solid #e5e7eb",
+              }}
+            >
+              <thead>
+                <tr style={{ background: "#f8fafc" }}>
+                  <th style={{ textAlign: "left", padding: "10px", borderBottom: "1px solid #e5e7eb" }}>Title</th>
+                  <th style={{ textAlign: "left", padding: "10px", borderBottom: "1px solid #e5e7eb" }}>Year</th>
+                  <th style={{ textAlign: "left", padding: "10px", borderBottom: "1px solid #e5e7eb" }}>Methodology</th>
+                  <th style={{ textAlign: "left", padding: "10px", borderBottom: "1px solid #e5e7eb" }}>Advantages</th>
+                  <th style={{ textAlign: "left", padding: "10px", borderBottom: "1px solid #e5e7eb" }}>Disadvantages</th>
+                  <th style={{ textAlign: "left", padding: "10px", borderBottom: "1px solid #e5e7eb" }}>Limitations</th>
+                  <th style={{ textAlign: "left", padding: "10px", borderBottom: "1px solid #e5e7eb" }}>Future Scope</th>
+                </tr>
+              </thead>
+              <tbody>
+                {papers.map((paper, index) => (
+                  <tr key={paperRowKey(paper, index)}>
+                    <td style={{ padding: "10px", borderBottom: "1px solid #f1f5f9" }}>{paper.title || ""}</td>
+                    <td style={{ padding: "10px", borderBottom: "1px solid #f1f5f9" }}>{paper.year || ""}</td>
+                    <td style={{ padding: "10px", borderBottom: "1px solid #f1f5f9" }}>{paper.methodology || ""}</td>
+                    <td style={{ padding: "10px", borderBottom: "1px solid #f1f5f9" }}>{paper.advantages || ""}</td>
+                    <td style={{ padding: "10px", borderBottom: "1px solid #f1f5f9" }}>{paper.disadvantages || ""}</td>
+                    <td style={{ padding: "10px", borderBottom: "1px solid #f1f5f9" }}>{paper.limitations || ""}</td>
+                    <td style={{ padding: "10px", borderBottom: "1px solid #f1f5f9" }}>{paper.futureScope || ""}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <button
+            style={{
+              marginTop: 12,
+              padding: "11px 26px",
+              borderRadius: 8,
+              border: "none",
+              background: "#4477ee",
+              color: "#fff",
+              fontWeight: 600,
+              fontSize: 16,
+              cursor: "pointer",
+              boxShadow: "0 2px 8px rgba(83,111,255,0.07)",
+              transition: "background 0.16s",
+            }}
+          >
+            Edit Table
+          </button>
+        </div>
+      )}
     </div>
   );
 };

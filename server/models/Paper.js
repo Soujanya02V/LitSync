@@ -9,6 +9,11 @@ const paperSchema = new mongoose.Schema({
   authors: { type: String },
   year: { type: String },
   summary: { type: String },
+  methodology: { type: String },
+  advantages: { type: String },
+  disadvantages: { type: String },
+  limitations: { type: String },
+  futureScope: { type: String },
   keywords: { type: [String], default: [] },
   createdAt: { type: Date, default: Date.now },
 });

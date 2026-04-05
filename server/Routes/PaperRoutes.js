@@ -78,6 +78,11 @@ async function handlePaperUpload(req, res) {
     const authors = optionalTrimmedString(req.body?.authors);
     const year = optionalTrimmedString(req.body?.year);
     const summary = optionalTrimmedString(req.body?.summary);
+    const methodology = optionalTrimmedString(req.body?.methodology);
+    const advantages = optionalTrimmedString(req.body?.advantages);
+    const disadvantages = optionalTrimmedString(req.body?.disadvantages);
+    const limitations = optionalTrimmedString(req.body?.limitations);
+    const futureScope = optionalTrimmedString(req.body?.futureScope);
     const keywords = parseKeywords(req.body?.keywords);
 
     const uploadResult = await uploadRawBufferToCloudinary(req.file.buffer, req.file.originalname);
@@ -101,6 +106,11 @@ async function handlePaperUpload(req, res) {
       authors,
       year,
       summary,
+      methodology,
+      advantages,
+      disadvantages,
+      limitations,
+      futureScope,
       keywords,
     });
 
@@ -125,6 +135,11 @@ router.put("/:id", async (req, res) => {
       authors: optionalTrimmedString(req.body?.authors),
       year: optionalTrimmedString(req.body?.year),
       summary: optionalTrimmedString(req.body?.summary),
+      methodology: optionalTrimmedString(req.body?.methodology),
+      advantages: optionalTrimmedString(req.body?.advantages),
+      disadvantages: optionalTrimmedString(req.body?.disadvantages),
+      limitations: optionalTrimmedString(req.body?.limitations),
+      futureScope: optionalTrimmedString(req.body?.futureScope),
       keywords: parseKeywords(req.body?.keywords),
     };
 
