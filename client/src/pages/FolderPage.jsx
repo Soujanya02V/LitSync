@@ -48,6 +48,7 @@ function FolderPage() {
   const [summary, setSummary] = useState("");
   const [keywords, setKeywords] = useState("");
   const [showForm, setShowForm] = useState(false);
+  const [editPaper, setEditPaper] = useState(null);
   const [expandedPaper, setExpandedPaper] = useState({});
 
   const fileInputRef = useRef(null);
@@ -77,7 +78,18 @@ function FolderPage() {
     setYear("");
     setSummary("");
     setKeywords("");
+    setEditPaper(null);
     setShowForm(false);
+  };
+
+  const handleEdit = (paper) => {
+    setEditPaper(paper);
+    setSelectedFile(null);
+    setAuthors(paper?.authors || "");
+    setYear(paper?.year || "");
+    setSummary(paper?.summary || "");
+    setKeywords(formatKeywordsLine(paper));
+    setShowForm(true);
   };
 
   const handlePickFile = () => {
@@ -95,10 +107,27 @@ function FolderPage() {
   };
 
   const performUpload = async (withMetadata) => {
-    if (!selectedFile || !id) return;
+    if (!id || (!editPaper?._id && !selectedFile)) return;
 
     setUploading(true);
     try {
+      if (editPaper?._id) {
+        const res = await axios.put(`${backendApi}/papers/${editPaper._id}`, {
+          authors,
+          year,
+          summary,
+          keywords,
+        });
+
+        setPapers((prev) =>
+          prev.map((paper) => (paper._id === editPaper._id ? res.data : paper))
+        );
+        clearUploadForm();
+        return;
+      }
+
+      if (!selectedFile) return;
+
       const formData = new FormData();
       formData.append("file", selectedFile);
       formData.append("folderId", id);
@@ -113,7 +142,7 @@ function FolderPage() {
       setPapers((prev) => [res.data, ...prev]);
       clearUploadForm();
     } catch (err) {
-      setError("Upload failed");
+      setError(err?.response?.data?.message || err?.message || "Upload failed");
     } finally {
       setUploading(false);
     }
@@ -185,6 +214,7 @@ function FolderPage() {
                   outline: "none",
                   fontSize: 16,
                   marginBottom: 0,
+                  color: "#111",
                   background: "#fafbfc",
                   transition: "box-shadow 0.15s",
                 }}
@@ -259,7 +289,7 @@ function FolderPage() {
   }}
   onClick={() => performUpload(true)}
 >
-  {uploading ? "Uploading..." : "Upload"}
+  {uploading ? "Uploading..." : editPaper ? "Update" : "Upload"}
 </button>
               <button
   disabled={uploading}
@@ -362,7 +392,7 @@ function FolderPage() {
                     Open
                   </a>
                 )}
-  
+                  <button onClick={() => handleEdit(paper)}>Edit</button>
                 <button onClick={() => handleDelete(paper._id)}>
                   Delete
                 </button>

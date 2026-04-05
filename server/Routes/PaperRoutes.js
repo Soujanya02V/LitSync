@@ -113,6 +113,36 @@ async function handlePaperUpload(req, res) {
 router.post("/upload", upload.single("file"), handlePaperUpload);
 router.post("/", upload.single("file"), handlePaperUpload);
 
+router.put("/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: "Invalid paper id" });
+    }
+
+    const update = {
+      authors: optionalTrimmedString(req.body?.authors),
+      year: optionalTrimmedString(req.body?.year),
+      summary: optionalTrimmedString(req.body?.summary),
+      keywords: parseKeywords(req.body?.keywords),
+    };
+
+    const paper = await Paper.findByIdAndUpdate(id, update, {
+      new: true,
+      runValidators: true,
+    });
+
+    if (!paper) {
+      return res.status(404).json({ message: "Paper not found" });
+    }
+
+    return res.json(paper);
+  } catch (err) {
+    return res.status(500).json({ message: err?.message || "Failed to update paper" });
+  }
+});
+
 function extractPublicIdFromRawUrl(url) {
   if (!url) return "";
   // Expected patterns like:
