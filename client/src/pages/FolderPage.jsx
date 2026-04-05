@@ -55,6 +55,8 @@ function FolderPage() {
   const [showForm, setShowForm] = useState(false);
   const [editPaper, setEditPaper] = useState(null);
   const [showTable, setShowTable] = useState(false);
+  const [isEditingTable, setIsEditingTable] = useState(false);
+  const [tableEdits, setTableEdits] = useState({});
   const [expandedPaper, setExpandedPaper] = useState({});
 
   const fileInputRef = useRef(null);
@@ -177,6 +179,60 @@ function FolderPage() {
   const handleDelete = async (paperId) => {
     await axios.delete(`${backendApi}/papers/${paperId}`);
     setPapers((prev) => prev.filter((p) => p._id !== paperId));
+  };
+
+  const handleTableFieldChange = (paperId, field, value) => {
+    if (!paperId) return;
+
+    setTableEdits((prev) => ({
+      ...prev,
+      [paperId]: {
+        ...(prev[paperId] || {}),
+        [field]: value,
+      },
+    }));
+  };
+
+  const handleSaveTableChanges = async () => {
+    const updates = Object.entries(tableEdits).filter(([paperId, fields]) => {
+      if (!paperId) return false;
+      if (!fields || typeof fields !== "object") return false;
+      return Object.keys(fields).length > 0;
+    });
+
+    if (updates.length === 0) {
+      setIsEditingTable(false);
+      setTableEdits({});
+      return;
+    }
+
+    try {
+      const responses = await Promise.all(
+        updates.map(([paperId, fields]) =>
+          axios.put(`${backendApi}/papers/${paperId}`, {
+            methodology: fields.methodology,
+            advantages: fields.advantages,
+            disadvantages: fields.disadvantages,
+            limitations: fields.limitations,
+            futureScope: fields.futureScope,
+          })
+        )
+      );
+
+      const updatedById = responses.reduce((acc, res) => {
+        const updatedPaper = res?.data;
+        if (updatedPaper?._id) {
+          acc[updatedPaper._id] = updatedPaper;
+        }
+        return acc;
+      }, {});
+
+      setPapers((prev) => prev.map((paper) => updatedById[paper._id] || paper));
+      setIsEditingTable(false);
+      setTableEdits({});
+    } catch (err) {
+      setError(err?.response?.data?.message || err?.message || "Failed to save table changes");
+    }
   };
 
   return (
@@ -569,11 +625,66 @@ function FolderPage() {
                   <tr key={paperRowKey(paper, index)}>
                     <td style={{ padding: "10px", borderBottom: "1px solid #f1f5f9" }}>{paper.title || ""}</td>
                     <td style={{ padding: "10px", borderBottom: "1px solid #f1f5f9" }}>{paper.year || ""}</td>
-                    <td style={{ padding: "10px", borderBottom: "1px solid #f1f5f9" }}>{paper.methodology || ""}</td>
-                    <td style={{ padding: "10px", borderBottom: "1px solid #f1f5f9" }}>{paper.advantages || ""}</td>
-                    <td style={{ padding: "10px", borderBottom: "1px solid #f1f5f9" }}>{paper.disadvantages || ""}</td>
-                    <td style={{ padding: "10px", borderBottom: "1px solid #f1f5f9" }}>{paper.limitations || ""}</td>
-                    <td style={{ padding: "10px", borderBottom: "1px solid #f1f5f9" }}>{paper.futureScope || ""}</td>
+                    <td style={{ padding: "10px", borderBottom: "1px solid #f1f5f9" }}>
+                      {isEditingTable ? (
+                        <textarea
+                          rows={2}
+                          value={tableEdits[paper._id]?.methodology ?? (paper.methodology || "")}
+                          onChange={(e) => handleTableFieldChange(paper._id, "methodology", e.target.value)}
+                          style={{ width: "100%", minWidth: 140, padding: "6px", border: "1px solid #cbd5e1", borderRadius: 6, fontSize: 13, resize: "vertical" }}
+                        />
+                      ) : (
+                        paper.methodology || ""
+                      )}
+                    </td>
+                    <td style={{ padding: "10px", borderBottom: "1px solid #f1f5f9" }}>
+                      {isEditingTable ? (
+                        <textarea
+                          rows={2}
+                          value={tableEdits[paper._id]?.advantages ?? (paper.advantages || "")}
+                          onChange={(e) => handleTableFieldChange(paper._id, "advantages", e.target.value)}
+                          style={{ width: "100%", minWidth: 140, padding: "6px", border: "1px solid #cbd5e1", borderRadius: 6, fontSize: 13, resize: "vertical" }}
+                        />
+                      ) : (
+                        paper.advantages || ""
+                      )}
+                    </td>
+                    <td style={{ padding: "10px", borderBottom: "1px solid #f1f5f9" }}>
+                      {isEditingTable ? (
+                        <textarea
+                          rows={2}
+                          value={tableEdits[paper._id]?.disadvantages ?? (paper.disadvantages || "")}
+                          onChange={(e) => handleTableFieldChange(paper._id, "disadvantages", e.target.value)}
+                          style={{ width: "100%", minWidth: 140, padding: "6px", border: "1px solid #cbd5e1", borderRadius: 6, fontSize: 13, resize: "vertical" }}
+                        />
+                      ) : (
+                        paper.disadvantages || ""
+                      )}
+                    </td>
+                    <td style={{ padding: "10px", borderBottom: "1px solid #f1f5f9" }}>
+                      {isEditingTable ? (
+                        <textarea
+                          rows={2}
+                          value={tableEdits[paper._id]?.limitations ?? (paper.limitations || "")}
+                          onChange={(e) => handleTableFieldChange(paper._id, "limitations", e.target.value)}
+                          style={{ width: "100%", minWidth: 140, padding: "6px", border: "1px solid #cbd5e1", borderRadius: 6, fontSize: 13, resize: "vertical" }}
+                        />
+                      ) : (
+                        paper.limitations || ""
+                      )}
+                    </td>
+                    <td style={{ padding: "10px", borderBottom: "1px solid #f1f5f9" }}>
+                      {isEditingTable ? (
+                        <textarea
+                          rows={2}
+                          value={tableEdits[paper._id]?.futureScope ?? (paper.futureScope || "")}
+                          onChange={(e) => handleTableFieldChange(paper._id, "futureScope", e.target.value)}
+                          style={{ width: "100%", minWidth: 140, padding: "6px", border: "1px solid #cbd5e1", borderRadius: 6, fontSize: 13, resize: "vertical" }}
+                        />
+                      ) : (
+                        paper.futureScope || ""
+                      )}
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -581,6 +692,13 @@ function FolderPage() {
           </div>
 
           <button
+            onClick={() => {
+              if (!isEditingTable) {
+                setIsEditingTable(true);
+                return;
+              }
+              handleSaveTableChanges();
+            }}
             style={{
               marginTop: 12,
               padding: "11px 26px",
@@ -595,7 +713,7 @@ function FolderPage() {
               transition: "background 0.16s",
             }}
           >
-            Edit Table
+            {isEditingTable ? "Save Changes" : "Edit Table"}
           </button>
         </div>
       )}
