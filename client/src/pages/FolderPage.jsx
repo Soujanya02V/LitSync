@@ -202,6 +202,7 @@ function FolderPage() {
                   marginBottom: 0,
                   background: "#fafbfc",
                   transition: "box-shadow 0.15s",
+                  color: "#111",
                 }}
                 placeholder="Year"
                 value={year}
@@ -218,6 +219,7 @@ function FolderPage() {
                   minHeight: 60,
                   background: "#fafbfc",
                   transition: "box-shadow 0.15s",
+                  color: "#111",
                 }}
                 placeholder="Summary"
                 value={summary}
@@ -233,6 +235,7 @@ function FolderPage() {
                   marginBottom: 0,
                   background: "#fafbfc",
                   transition: "box-shadow 0.15s",
+                  color: "#111",
                 }}
                 placeholder="Keywords"
                 value={keywords}
@@ -240,39 +243,40 @@ function FolderPage() {
               />
             </div>
             <div style={{display: "flex", justifyContent: "flex-end", gap: 12, marginTop: 14}}>
+            <button
+  disabled={uploading}
+  style={{
+    padding: "11px 26px",
+    borderRadius: 8,
+    border: "none",
+    background: uploading ? "#9db8ff" : "#4477ee",
+    color: "#fff",
+    fontWeight: 600,
+    fontSize: 16,
+    cursor: uploading ? "not-allowed" : "pointer",
+    boxShadow: "0 2px 8px rgba(83,111,255,0.07)",
+    transition: "background 0.16s",
+  }}
+  onClick={() => performUpload(true)}
+>
+  {uploading ? "Uploading..." : "Upload"}
+</button>
               <button
-                style={{
-                  padding: "11px 26px",
-                  borderRadius: 8,
-                  border: "none",
-                  background: "#4477ee",
-                  color: "#fff",
-                  fontWeight: 600,
-                  fontSize: 16,
-                  cursor: "pointer",
-                  boxShadow: "0 2px 8px rgba(83,111,255,0.07)",
-                  transition: "background 0.16s",
-                }}
-                onClick={() => performUpload(true)}
-              >
-                Upload
-              </button>
-              <button
-                style={{
-                  padding: "11px 26px",
-                  borderRadius: 8,
-                  border: "1px solid #ccd",
-                  background: "#f7f8fb",
-                  color: "#556",
-                  fontWeight: 500,
-                  fontSize: 16,
-                  cursor: "pointer",
-                  transition: "background 0.15s",
-                }}
-                onClick={() => performUpload(false)}
-              >
-                Skip
-              </button>
+  disabled={uploading}
+  style={{
+    padding: "11px 26px",
+    borderRadius: 8,
+    border: "1px solid #ccd",
+    background: uploading ? "#eee" : "#f7f8fb",
+    color: "#556",
+    fontWeight: 500,
+    fontSize: 16,
+    cursor: uploading ? "not-allowed" : "pointer",
+  }}
+  onClick={() => performUpload(false)}
+>
+  Skip
+</button>
             </div>
           </div>
         </div>
@@ -290,11 +294,14 @@ function FolderPage() {
               style={{
                 display: "flex",
                 justifyContent: "space-between",
-                border: "1px solid #ddd",
-                padding: 16,
-                margin: "12px 0",
-                borderRadius: 12,
-                background: "#fff",
+                alignItems: "flex-start",
+                padding: "18px 20px",
+                margin: "16px 0",
+                borderRadius: 14,
+                background: "#ffffff",
+                border: "1px solid #e5e7eb",
+                boxShadow: "0 4px 14px rgba(0,0,0,0.06)",
+                transition: "transform 0.1s ease",
               }}
             >
               {/* LEFT SIDE */}
