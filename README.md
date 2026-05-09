@@ -1,90 +1,134 @@
-# LR Survey Assistant (LitSync)
+# LitSync 📚
 
-Full-stack app to organize folders and upload papers (PDF/other docs) to Cloudinary, storing metadata in MongoDB.
+LitSync is a full-stack literature review assistant designed to help users organize, upload, analyze, and compare research papers efficiently.
 
-## Tech stack
+## 🚀 Features
 
-- **Client**: React + Vite
-- **Server**: Node.js + Express
-- **DB**: MongoDB (Mongoose)
-- **File storage**: Cloudinary (raw uploads)
+- 📁 Create and manage research folders
+- 📄 Upload research papers (PDFs)
+- ☁️ Cloudinary integration for file storage
+- 📝 Add metadata for papers:
+  - Authors
+  - Year
+  - Summary
+  - Methodology
+  - Advantages
+  - Disadvantages
+  - Limitations
+  - Future Scope
+  - Keywords
+- 🗂️ Dynamic paper cards UI
+- 📊 Table view for literature comparison
+- ✏️ Editable comparison table
+- 🧹 Delete papers
+- 🔍 Expand/collapse paper details
 
-## Project structure
+---
 
-- `client/` — frontend (Vite)
-- `server/` — backend API (Express)
+## 🛠️ Tech Stack
 
-## Setup
+### Frontend
+- React
+- React Router
+- Axios
 
-### 1) Server environment variables
+### Backend
+- Node.js
+- Express.js
+- MongoDB
+- Mongoose
 
-Create `server/.env`:
+### Storage
+- Cloudinary
 
-```env
-PORT=5000
-MONGO_URI=your_mongodb_connection_string
-CLOUD_NAME=your_cloudinary_cloud_name
-API_KEY=your_cloudinary_api_key
-API_SECRET=your_cloudinary_api_secret
-```
+---
 
-### 2) Client environment variables
-
-Create `client/.env`:
-
-```env
-VITE_BACKEND_API_URL=http://localhost:5000
-```
-
-## Install dependencies
-
-From the repo root:
-
-```bash
-cd server
-npm install
-```
-
-```bash
-cd ../client
-npm install
-```
-
-## Run locally
-
-### Start the server
+## 📂 Project Structure
 
 ```bash
-cd server
-npm run dev
+client/
+server/
 ```
 
-### Start the client
+---
+
+## ⚙️ Setup Instructions
+
+### 1️⃣ Clone Repository
+
+```bash
+git clone <repo-url>
+```
+
+### 2️⃣ Install Dependencies
+
+#### Client
 
 ```bash
 cd client
+npm install
+```
+
+#### Server
+
+```bash
+cd server
+npm install
+```
+
+---
+
+## 🔑 Environment Variables
+
+Create a `.env` file inside `server/`
+
+```env
+PORT=5000
+MONGO_URI=your_mongodb_uri
+
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
+```
+
+---
+
+## ▶️ Run Project
+
+### Backend
+
+```bash
 npm run dev
 ```
 
-Open the client URL printed by Vite (usually `http://localhost:5173`).
+### Frontend
 
-## API overview
+```bash
+npm run dev
+```
 
-### Folders
+---
 
-- `GET /folders` — list folders
-- `POST /folders` — create folder
-- `DELETE /folders/:folderId` — delete folder + its papers (also removes Cloudinary assets)
+## 📌 Future Improvements
 
-### Papers
+- 🤖 AI-based metadata autofill from PDFs
+- 🔐 User authentication
+- 📑 Export comparison tables
+- 🧠 AI-powered literature summarization
+- 📊 Advanced analytics dashboard
 
-- `GET /papers/:folderId` — list papers in a folder
-- `POST /papers/upload` — upload a paper file (multipart/form-data)
-  - fields: `file`, `folderId`, `authors`, `year`, `summary`, `keywords`
-  - `keywords` can be a JSON array string (e.g. `["a","b"]`) or a comma-separated string (server accepts both)
-- `DELETE /papers/:paperId` — delete a paper (also removes the Cloudinary asset)
+---
 
-## Notes
+## 📸 Current Functionalities
 
-- The server uploads files to Cloudinary using `resource_type: "raw"` and stores `secure_url` (with `?fl_attachment=false`) in the `Paper.fileUrl` field.
+- Upload PDFs
+- Store metadata in MongoDB
+- Compare papers in table format
+- Edit research analysis fields
+- Cloud-based file storage
 
+---
+
+## 👨‍💻 Author
+
+Soujanya Maharudra
