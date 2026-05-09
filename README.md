@@ -113,7 +113,6 @@ npm run dev
 
 - 🤖 AI-based metadata autofill from PDFs
 - 🔐 User authentication
-- 📑 Export comparison tables
 - 🧠 AI-powered literature summarization
 - 📊 Advanced analytics dashboard
 
