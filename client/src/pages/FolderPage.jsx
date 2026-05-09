@@ -37,6 +37,7 @@ function FolderPage() {
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
+  const [folder, setFolder] = useState(null);
 
   const [selectedFile, setSelectedFile] = useState(null);
   const [authors, setAuthors] = useState("");
@@ -72,8 +73,19 @@ function FolderPage() {
     }
   };
 
+  const fetchFolder = async () => {
+    if (!id) return;
+    try {
+      const res = await axios.get(`${backendApi}/folders/${id}`);
+      setFolder(res?.data || null);
+    } catch {
+      setFolder(null);
+    }
+  };
+
   useEffect(() => {
     fetchPapers();
+    fetchFolder();
   }, [id]);
 
   const clearUploadForm = () => {
@@ -177,8 +189,32 @@ function FolderPage() {
     setPapers((prev) => prev.filter((p) => p._id !== paperId));
   };
 
-  const handleExportPdf = () => {
+  const handleExportPdf = async () => {
+    let folderName =
+      folder?.name != null && String(folder.name).trim() !== "" ? String(folder.name).trim() : "";
+
+    // If user clicks export before folder loads, fetch it once.
+    if (!folderName && id) {
+      try {
+        const res = await axios.get(`${backendApi}/folders/${id}`);
+        setFolder(res?.data || null);
+        folderName =
+          res?.data?.name != null && String(res.data.name).trim() !== ""
+            ? String(res.data.name).trim()
+            : "";
+      } catch {
+        // fall back below
+      }
+    }
+
     const doc = new jsPDF({ orientation: "landscape", unit: "pt", format: "a4" });
+
+    const safeFolderName = (folderName || "Folder").trim() || "Folder";
+    const pdfTitle = `${safeFolderName} - Literature Survey`;
+
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(16);
+    doc.text(pdfTitle, 24, 28);
 
     autoTable(doc, {
       head: [
@@ -204,10 +240,11 @@ function FolderPage() {
       styles: { fontSize: 9, cellPadding: 6, valign: "top" },
       headStyles: { fillColor: [248, 250, 252], textColor: [15, 23, 42] },
       theme: "grid",
-      margin: { top: 36, left: 24, right: 24, bottom: 24 },
+      margin: { top: 44, left: 24, right: 24, bottom: 24 },
     });
 
-    doc.save("Literature_Review_Table.pdf");
+    const fileSafe = safeFolderName.replace(/[\\\\/:*?"<>|]/g, "_").replace(/\\s+/g, "_");
+    doc.save(`${fileSafe}_Literature_Survey.pdf`);
   };
 
   const handleTableFieldChange = (paperId, field, value) => {

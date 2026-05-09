@@ -48,6 +48,25 @@ router.get("/", async (req, res) => {
   }
 });
 
+router.get("/:folderId", async (req, res) => {
+  try {
+    const { folderId } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(folderId)) {
+      return res.status(400).json({ message: "Invalid folderId" });
+    }
+
+    const folder = await Folder.findById(folderId);
+    if (!folder) {
+      return res.status(404).json({ message: "Folder not found" });
+    }
+
+    return res.json(folder);
+  } catch (err) {
+    return res.status(500).json({ message: err?.message || "Failed to fetch folder" });
+  }
+});
+
 router.delete("/:folderId", async (req, res) => {
   try {
     const { folderId } = req.params;
