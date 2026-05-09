@@ -1,4 +1,5 @@
 # LitSync 📚
+# Literature Survey Assistant
 
 LitSync is a full-stack literature review assistant designed to help users organize, upload, analyze, and compare research papers efficiently.
 
