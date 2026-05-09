@@ -124,6 +124,7 @@ npm run dev
 - Store metadata in MongoDB
 - Compare papers in table format
 - Edit research analysis fields
+- Export comparison tables
 - Cloud-based file storage
 
 ---
