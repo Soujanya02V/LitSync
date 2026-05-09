@@ -1,6 +1,8 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
+import { jsPDF } from "jspdf";
+import autoTable from "jspdf-autotable";
 
 function keywordsStringToArray(value) {
   if (value == null || typeof value !== "string") return [];
@@ -23,12 +25,6 @@ function formatKeywordsLine(paper) {
   const kw = paper.keywords;
   if (!Array.isArray(kw) || kw.length === 0) return "";
   return kw.map(String).map((s) => s.trim()).filter(Boolean).join(", ");
-}
-
-function hasExpandablePaperDetails(paper) {
-  const summary = paper.summary != null ? String(paper.summary).trim() : "";
-  const kwLine = formatKeywordsLine(paper);
-  return Boolean(summary || kwLine);
 }
 
 function FolderPage() {
@@ -181,6 +177,39 @@ function FolderPage() {
     setPapers((prev) => prev.filter((p) => p._id !== paperId));
   };
 
+  const handleExportPdf = () => {
+    const doc = new jsPDF({ orientation: "landscape", unit: "pt", format: "a4" });
+
+    autoTable(doc, {
+      head: [
+        [
+          "Title",
+          "Year",
+          "Methodology",
+          "Advantages",
+          "Disadvantages",
+          "Limitations",
+          "Future Scope",
+        ],
+      ],
+      body: papers.map((p) => [
+        p?.title ? String(p.title) : "",
+        p?.year ? String(p.year) : "",
+        p?.methodology ? String(p.methodology) : "",
+        p?.advantages ? String(p.advantages) : "",
+        p?.disadvantages ? String(p.disadvantages) : "",
+        p?.limitations ? String(p.limitations) : "",
+        p?.futureScope ? String(p.futureScope) : "",
+      ]),
+      styles: { fontSize: 9, cellPadding: 6, valign: "top" },
+      headStyles: { fillColor: [248, 250, 252], textColor: [15, 23, 42] },
+      theme: "grid",
+      margin: { top: 36, left: 24, right: 24, bottom: 24 },
+    });
+
+    doc.save("Literature_Review_Table.pdf");
+  };
+
   const handleTableFieldChange = (paperId, field, value) => {
     if (!paperId) return;
 
@@ -266,6 +295,8 @@ function FolderPage() {
   
       <h1>Folder</h1>
       <p>ID: {id}</p>
+      {loading ? <p style={{ color: "#475569" }}>Loading papers…</p> : null}
+      {error ? <p style={{ color: "crimson" }}>{error}</p> : null}
 
       {showForm && (
         <div
@@ -691,30 +722,49 @@ function FolderPage() {
             </table>
           </div>
 
-          <button
-            onClick={() => {
-              if (!isEditingTable) {
-                setIsEditingTable(true);
-                return;
-              }
-              handleSaveTableChanges();
-            }}
-            style={{
-              marginTop: 12,
-              padding: "11px 26px",
-              borderRadius: 8,
-              border: "none",
-              background: "#4477ee",
-              color: "#fff",
-              fontWeight: 600,
-              fontSize: 16,
-              cursor: "pointer",
-              boxShadow: "0 2px 8px rgba(83,111,255,0.07)",
-              transition: "background 0.16s",
-            }}
-          >
-            {isEditingTable ? "Save Changes" : "Edit Table"}
-          </button>
+          <div style={{ display: "flex", gap: 12, alignItems: "center", marginTop: 12 }}>
+            <button
+              type="button"
+              onClick={handleExportPdf}
+              style={{
+                padding: "11px 18px",
+                borderRadius: 8,
+                border: "1px solid #ccd",
+                background: "#f7f8fb",
+                color: "#334155",
+                fontWeight: 600,
+                fontSize: 14,
+                cursor: "pointer",
+              }}
+            >
+              Export PDF
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                if (!isEditingTable) {
+                  setIsEditingTable(true);
+                  return;
+                }
+                handleSaveTableChanges();
+              }}
+              style={{
+                padding: "11px 26px",
+                borderRadius: 8,
+                border: "none",
+                background: "#4477ee",
+                color: "#fff",
+                fontWeight: 600,
+                fontSize: 16,
+                cursor: "pointer",
+                boxShadow: "0 2px 8px rgba(83,111,255,0.07)",
+                transition: "background 0.16s",
+              }}
+            >
+              {isEditingTable ? "Save Changes" : "Edit Table"}
+            </button>
+          </div>
         </div>
       )}
     </div>
