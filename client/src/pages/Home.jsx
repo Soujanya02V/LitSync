@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import { signOut } from "firebase/auth";
 import { createFolder, deleteFolder, getFolders } from "../api/folderApi";
+import { useAuth } from "../contexts/AuthContext";
 import { auth } from "../firebase/firebase";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
 function Home() {
+  const { currentUser } = useAuth();
   const [folderName, setFolderName] = useState("");
   const [folders, setFolders] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -16,7 +18,8 @@ function Home() {
   const loadFolders = async () => {
     try {
       setError("");
-      const data = await getFolders();
+      if (!currentUser?.uid) return;
+      const data = await getFolders(currentUser.uid);
       setFolders(Array.isArray(data) ? data : []);
     } catch (err) {
       setError(err?.message || "Failed to load folders");
@@ -24,8 +27,9 @@ function Home() {
   };
 
   useEffect(() => {
+    if (!currentUser?.uid) return;
     loadFolders();
-  }, []);
+  }, [currentUser?.uid]);
 
   const handleCreate = async () => {
     const name = folderName.trim();
@@ -34,7 +38,11 @@ function Home() {
     setLoading(true);
     try {
       setError("");
-      const newFolder = await createFolder(name);
+      if (!currentUser?.uid) {
+        setError("Not signed in");
+        return;
+      }
+      const newFolder = await createFolder(name, currentUser.uid);
       setFolders([...folders, newFolder]);
       setFolderName("");
     } catch (err) {

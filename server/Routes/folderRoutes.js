@@ -27,6 +27,12 @@ async function destroyPaperAsset(paper) {
   }
 }
 
+function requiredCreatedByQuery(req) {
+  const raw = req.query?.createdBy;
+  const createdBy = raw != null ? String(raw).trim() : "";
+  return createdBy || null;
+}
+
 router.post("/", async (req, res) => {
   try {
     const folder = await Folder.create(req.body);
@@ -41,7 +47,12 @@ router.post("/", async (req, res) => {
 
 router.get("/", async (req, res) => {
   try {
-    const folders = await Folder.find();
+    const createdBy = requiredCreatedByQuery(req);
+    if (!createdBy) {
+      return res.status(400).json({ message: "createdBy query parameter is required" });
+    }
+
+    const folders = await Folder.find({ createdBy });
     res.json(folders);
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -56,7 +67,12 @@ router.get("/:folderId", async (req, res) => {
       return res.status(400).json({ message: "Invalid folderId" });
     }
 
-    const folder = await Folder.findById(folderId);
+    const createdBy = requiredCreatedByQuery(req);
+    if (!createdBy) {
+      return res.status(400).json({ message: "createdBy query parameter is required" });
+    }
+
+    const folder = await Folder.findOne({ _id: folderId, createdBy });
     if (!folder) {
       return res.status(404).json({ message: "Folder not found" });
     }

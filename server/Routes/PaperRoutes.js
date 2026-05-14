@@ -74,6 +74,11 @@ async function handlePaperUpload(req, res) {
       return res.status(400).json({ message: "folderId is required" });
     }
 
+    const createdBy = optionalTrimmedString(req.body?.createdBy);
+    if (!createdBy) {
+      return res.status(400).json({ message: "createdBy is required" });
+    }
+
     const title = req.file.originalname;
     const authors = optionalTrimmedString(req.body?.authors);
     const year = optionalTrimmedString(req.body?.year);
@@ -103,6 +108,7 @@ async function handlePaperUpload(req, res) {
       publicId,
       resourceType,
       folderId,
+      createdBy,
       authors,
       year,
       summary,
@@ -176,7 +182,12 @@ router.get("/:folderId", async (req, res) => {
       return res.status(400).json({ message: "Invalid folderId" });
     }
 
-    const papers = await Paper.find({ folderId }).sort({ createdAt: -1 });
+    const createdBy = optionalTrimmedString(req.query?.createdBy);
+    if (!createdBy) {
+      return res.status(400).json({ message: "createdBy query parameter is required" });
+    }
+
+    const papers = await Paper.find({ folderId, createdBy }).sort({ createdAt: -1 });
     return res.json(papers);
   } catch (err) {
     return res.status(500).json({ message: err?.message || "Failed to fetch papers" });

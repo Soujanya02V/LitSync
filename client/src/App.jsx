@@ -1,25 +1,18 @@
-import { useEffect, useState } from "react";
-import { onAuthStateChanged } from "firebase/auth";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
-import { auth } from "./firebase/firebase";
+import { useAuth } from "./contexts/AuthContext";
 import Home from "./pages/Home";
 import FolderPage from "./pages/FolderPage";
 import Login from "./pages/Login";
 
 function App() {
-  const [user, setUser] = useState(undefined);
+  const { currentUser } = useAuth();
 
-  useEffect(() => {
-    const unsub = onAuthStateChanged(auth, setUser);
-    return () => unsub();
-  }, []);
-
-  if (user === undefined) {
+  if (currentUser === undefined) {
     return null;
   }
 
-  if (!user) {
+  if (!currentUser) {
     return <Login />;
   }
 

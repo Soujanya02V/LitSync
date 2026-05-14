@@ -6,6 +6,10 @@ const paperSchema = new mongoose.Schema({
   publicId: { type: String },
   resourceType: { type: String },
   folderId: { type: mongoose.Schema.Types.ObjectId, ref: "Folder" },
+  createdBy: {
+    type: String,
+    required: true,
+  },
   authors: { type: String },
   year: { type: String },
   summary: { type: String },

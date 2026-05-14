@@ -1,6 +1,7 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
+import { useAuth } from "../contexts/AuthContext";
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
 
@@ -28,6 +29,7 @@ function formatKeywordsLine(paper) {
 }
 
 function FolderPage() {
+  const { currentUser } = useAuth();
   const { id } = useParams();
   const navigate = useNavigate();
 
@@ -59,12 +61,14 @@ function FolderPage() {
   const fileInputRef = useRef(null);
 
   const fetchPapers = async () => {
-    if (!id) return;
+    if (!id || !currentUser?.uid) return;
 
     setLoading(true);
     try {
       setError("");
-      const res = await axios.get(`${backendApi}/papers/${id}`);
+      const res = await axios.get(`${backendApi}/papers/${id}`, {
+        params: { createdBy: currentUser.uid },
+      });
       setPapers(Array.isArray(res.data) ? res.data : []);
     } catch (err) {
       setError(err?.response?.data?.message || err?.message || "Failed to load papers");
@@ -74,9 +78,11 @@ function FolderPage() {
   };
 
   const fetchFolder = async () => {
-    if (!id) return;
+    if (!id || !currentUser?.uid) return;
     try {
-      const res = await axios.get(`${backendApi}/folders/${id}`);
+      const res = await axios.get(`${backendApi}/folders/${id}`, {
+        params: { createdBy: currentUser.uid },
+      });
       setFolder(res?.data || null);
     } catch {
       setFolder(null);
@@ -84,9 +90,10 @@ function FolderPage() {
   };
 
   useEffect(() => {
+    if (!id || !currentUser?.uid) return;
     fetchPapers();
     fetchFolder();
-  }, [id]);
+  }, [id, currentUser?.uid]);
 
   const clearUploadForm = () => {
     setSelectedFile(null);
@@ -159,9 +166,15 @@ function FolderPage() {
 
       if (!selectedFile) return;
 
+      if (!currentUser?.uid) {
+        setError("Not signed in");
+        return;
+      }
+
       const formData = new FormData();
       formData.append("file", selectedFile);
       formData.append("folderId", id);
+      formData.append("createdBy", currentUser.uid);
 
       formData.append("authors", withMetadata ? authors : "");
       formData.append("year", withMetadata ? year : "");
@@ -194,9 +207,11 @@ function FolderPage() {
       folder?.name != null && String(folder.name).trim() !== "" ? String(folder.name).trim() : "";
 
     // If user clicks export before folder loads, fetch it once.
-    if (!folderName && id) {
+    if (!folderName && id && currentUser?.uid) {
       try {
-        const res = await axios.get(`${backendApi}/folders/${id}`);
+        const res = await axios.get(`${backendApi}/folders/${id}`, {
+          params: { createdBy: currentUser.uid },
+        });
         setFolder(res?.data || null);
         folderName =
           res?.data?.name != null && String(res.data.name).trim() !== ""
