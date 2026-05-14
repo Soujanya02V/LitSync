@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
+import { signOut } from "firebase/auth";
 import { createFolder, deleteFolder, getFolders } from "../api/folderApi";
+import { auth } from "../firebase/firebase";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
@@ -85,7 +87,14 @@ function Home() {
   };
 
   return (
-    <div style={{ padding: "20px" }}>
+    <div style={{ padding: "48px 20px 20px 20px", position: "relative" }}>
+      <button
+        type="button"
+        style={{ position: "absolute", top: 10, left: 10 }}
+        onClick={() => void signOut(auth)}
+      >
+        Logout
+      </button>
       <h1>LitSync</h1>
 
       <div style={{ marginTop: 20 }}>
