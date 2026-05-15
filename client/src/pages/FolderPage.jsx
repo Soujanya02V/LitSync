@@ -317,7 +317,14 @@ function FolderPage() {
   };
 
   return (
-    <div style={{ padding: "20px", paddingTop: 56, maxWidth: showTable ? "100%" : 640 }}>
+    <div
+      style={{
+        padding: "20px",
+        paddingTop: 56,
+        maxWidth: showTable ? "100%" : 640,
+        position: "relative",
+      }}
+    >
       <button
         onClick={() => navigate("/")}
         style={{ position: "absolute", top: 10, left: 10 }}
