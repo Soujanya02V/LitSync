@@ -104,7 +104,6 @@ function Home() {
           onChange={(e) => setFolderName(e.target.value)}
           style={{ padding: "8px", marginRight: "10px" }}
         />
-
         <button onClick={handleCreate} disabled={loading}>
           {loading ? "Creating..." : "Create Folder"}
         </button>
@@ -114,43 +113,71 @@ function Home() {
 
       <h2 style={{ marginTop: 20 }}>Folders</h2>
 
-      <ul style={{ listStyle: "none", padding: 0 }}>
-        {folders.map((folder) => (
-          <li
-            key={folder._id}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 12,
-              margin: "8px 0",
-            }}
-          >
-            <span
-              role="button"
-              tabIndex={0}
-              onClick={() => navigate(`/folder/${folder._id}`)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  e.preventDefault();
-                  navigate(`/folder/${folder._id}`);
-                }
+      {folders.length === 0 ? (
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            minHeight: "180px",
+            color: "#555",
+            fontSize: 18,
+            marginTop: 40,
+            border: "1px solid #eee",
+            borderRadius: 8,
+            background: "#fafbfc",
+            maxWidth: 400,
+            marginLeft: "auto",
+            marginRight: "auto"
+          }}
+        >
+          <div style={{ fontWeight: 500, fontSize: 22, marginBottom: 8 }}>
+            No folders yet <span role="img" aria-label="folder">📁</span>
+          </div>
+          <div style={{ fontSize: 16, color: "#888" }}>
+            Create your first research folder
+          </div>
+        </div>
+      ) : (
+        <ul style={{ listStyle: "none", padding: 0 }}>
+          {folders.map((folder) => (
+            <li
+              key={folder._id}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 12,
+                margin: "8px 0",
               }}
-              style={{ cursor: "pointer", flex: 1 }}
             >
-              {folder.name}
-            </span>
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                openDeleteConfirmToast(folder);
-              }}
-            >
-              Delete
-            </button>
-          </li>
-        ))}
-      </ul>
+              <span
+                role="button"
+                tabIndex={0}
+                onClick={() => navigate(`/folder/${folder._id}`)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    navigate(`/folder/${folder._id}`);
+                  }
+                }}
+                style={{ cursor: "pointer", flex: 1 }}
+              >
+                {folder.name}
+              </span>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  openDeleteConfirmToast(folder);
+                }}
+              >
+                Delete
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }
