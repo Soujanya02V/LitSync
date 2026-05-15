@@ -1,92 +1,122 @@
 # LitSync 📚
 # Literature Survey Assistant
 
-LitSync is a full-stack literature review assistant designed to help users organize, upload, analyze, and compare research papers efficiently.
-
-## 🚀 Features
-
-- 🔐 **Firebase Authentication (Google Sign-In)** — guests see a centered login screen; signed-in users access the app
-- 📁 Create and manage research folders
-- 📄 Upload research papers (PDFs)
-- ☁️ Cloudinary integration for file storage
-- 📝 Add metadata for papers:
-  - Authors
-  - Year
-  - Summary
-  - Methodology
-  - Advantages
-  - Disadvantages
-  - Limitations
-  - Future Scope
-  - Keywords
-- 🗂️ Dynamic paper cards UI
-- 📊 Table view for literature comparison
-- ✏️ Editable comparison table
-- 🧹 Delete papers
-- 🔍 Expand/collapse paper details
+LitSync is a full-stack literature review assistant that helps users organize, analyze, compare, and manage research papers efficiently through structured metadata extraction, comparison tables, cloud storage, and user-specific workspaces.
 
 ---
 
-## 🛠️ Tech Stack
+## 🚀 Features
 
-### Frontend
+### 🔐 Authentication
+- Firebase Google Authentication
+- Login-gated application flow
+- Persistent user sessions
+- Secure logout functionality
 
+### 📁 Folder & Paper Management
+- Create research folders
+- Upload research papers (PDFs)
+- User-specific folders and papers
+- Delete papers and folders
+- Cloudinary-powered cloud storage
+
+### 📝 Research Metadata
+Store and manage:
+- Authors
+- Publication Year
+- Summary
+- Methodology
+- Advantages
+- Disadvantages
+- Limitations
+- Future Scope
+- Keywords
+
+### 📊 Literature Comparison
+- Dynamic paper cards UI
+- Expand/collapse paper details
+- Editable comparison table
+- Structured literature survey view
+- PDF export for comparison tables
+
+### 🧱 Architecture Improvements
+- Reusable React components
+- Modular frontend structure
+- Firebase auth integration
+- Scalable component-based UI
+
+---
+
+# 🛠️ Tech Stack
+
+## Frontend
 - React (Vite)
 - React Router
 - Axios
-- Firebase Auth (Google provider)
+- Firebase Authentication
 - react-hot-toast
 
-### Backend
-
+## Backend
 - Node.js
 - Express.js
 - MongoDB
 - Mongoose
 
-### Storage
-
+## Cloud & Storage
 - Cloudinary
 
 ---
 
-## 📂 Project Structure
+# 📂 Project Structure
 
 ```text
 LR_Survey_Assistant/
-├── client/                 # Vite + React SPA
+├── client/
 │   ├── src/
-│   │   ├── api/            # API helpers (e.g. folders)
-│   │   ├── firebase/       # Firebase app + auth exports
-│   │   ├── pages/          # Home, FolderPage, Login
-│   │   ├── App.jsx         # Auth gating + routes
+│   │   ├── api/
+│   │   ├── components/
+│   │   │   ├── UploadModal.jsx
+│   │   │   ├── PaperCard.jsx
+│   │   │   ├── PaperTable.jsx
+│   │   │   └── EmptyState.jsx
+│   │   ├── contexts/
+│   │   ├── firebase/
+│   │   ├── pages/
+│   │   ├── App.jsx
 │   │   └── main.jsx
-│   └── .env                # Client env (create locally; not committed if secrets)
-└── server/                 # Express API
-    └── ...
+│   └── .env
+│
+└── server/
+    ├── Models/
+    ├── Routes/
+    ├── Controllers/
+    ├── index.js
+    └── .env
 ```
 
 ---
 
-## ⚙️ Setup Instructions
+# ⚙️ Setup Instructions
 
-### 1️⃣ Clone Repository
+## 1️⃣ Clone Repository
 
 ```bash
 git clone <repo-url>
 cd LR_Survey_Assistant
 ```
 
-### 2️⃣ Install Dependencies
+---
 
-#### Client
+## 2️⃣ Install Dependencies
+
+### Client
 
 ```bash
 cd client
 npm install
 ```
 
-#### Server
+### Server
 
 ```bash
 cd server
@@ -95,11 +125,9 @@ npm install
 
 ---
 
-## 🔑 Environment Variables
+# 🔑 Environment Variables
 
-### Server
-
-Create a `.env` file inside `server/`:
+## Server (`server/.env`)
 
 ```env
 PORT=5000
@@ -110,9 +138,9 @@ CLOUDINARY_API_KEY=your_api_key
 CLOUDINARY_API_SECRET=your_api_secret
 ```
 
-### Client
+---
 
-Create a `.env` file inside `client/` (Vite exposes only variables prefixed with `VITE_`):
+## Client (`client/.env`)
 
 ```env
 VITE_BACKEND_API_URL=http://localhost:5000
@@ -123,66 +151,83 @@ VITE_FIREBASE_PROJECT_ID=your_project_id
 VITE_FIREBASE_STORAGE_BUCKET=your_storage_bucket
 VITE_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
 VITE_FIREBASE_APP_ID=your_app_id
-VITE_FIREBASE_MEASUREMENT_ID=your_measurement_id
 ```
-
-In the [Firebase Console](https://console.firebase.google.com/), enable **Google** under Authentication → Sign-in method, and add your local dev origin (for example `http://localhost:5173`) under Authentication → Settings → **Authorized domains** if needed.
 
 ---
 
-## ▶️ Run Project
+# ▶️ Run Project
 
-Run the API and the client from **two terminals** (or background processes).
-
-### Backend
+## Backend
 
 ```bash
 cd server
 npm run dev
 ```
 
-### Frontend
+## Frontend
 
 ```bash
 cd client
 npm run dev
 ```
 
-The Vite dev server URL is printed in the terminal (typically `http://localhost:5173`).
+---
+
+# 🔐 Authentication Flow
+
+- Users authenticate using Google Sign-In
+- Firebase manages session persistence
+- Unauthenticated users only see the login screen
+- Authenticated users access:
+  - folders
+  - papers
+  - comparison tables
+  - exports
 
 ---
 
-## 🔐 Authentication Behavior
+# 📄 PDF Export
 
-- The client initializes Firebase from `client/src/firebase/firebase.js`.
-- `App.jsx` uses `onAuthStateChanged` to track the current user.
-- **Not signed in:** only the **Login** view is shown (Google sign-in via popup).
-- **Signed in:** the existing router, home dashboard, and folder routes are available.
-- **Home** includes a **Logout** button that calls Firebase `signOut`; the listener then returns the user to the login screen.
+Users can export literature comparison tables as PDF reports.
 
----
-
-## 📌 Future Improvements
-
-- 🤖 AI-based metadata autofill from PDFs
-- 🔗 Optional: verify Firebase ID tokens on the server and tie folders/papers to user accounts
-- 🧠 AI-powered literature summarization
-- 📊 Advanced analytics dashboard
+Export includes:
+- Title
+- Methodology
+- Advantages
+- Disadvantages
+- Limitations
+- Future Scope
 
 ---
 
-## 📸 Current Functionalities
+# 📌 Future Improvements
 
-- Google Sign-In and session-aware UI (login gate + logout)
-- Upload PDFs
-- Store metadata in MongoDB
-- Compare papers in table format
-- Edit research analysis fields
-- Export comparison tables
-- Cloud-based file storage
+## 🤖 AI Integration
+- AI-powered metadata autofill
+- Research paper summarization
+- Semantic paper search
+- Literature insights generation
+
+## 🌐 Platform Improvements
+- Deployment
+- Advanced filtering/sorting
+- Collaboration features
+- Dashboard analytics
 
 ---
 
-## 👨‍💻 Author
+# 📸 Current Functionalities
+
+✅ Firebase Authentication  
+✅ User-specific workspaces  
+✅ Cloudinary PDF uploads  
+✅ Metadata management  
+✅ Editable comparison tables  
+✅ PDF export system  
+✅ Modular React architecture  
+
+---
+
+# 👨‍💻 Author
 
 Soujanya Maharudra
