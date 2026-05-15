@@ -1,16 +1,96 @@
-# React + Vite
+# LitSync Frontend 🎨
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Frontend client for LitSync — a literature survey assistant built with React and Vite.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+# 🚀 Features
 
-## React Compiler
+- Firebase Google Authentication
+- Login-gated UI
+- Research folder management
+- PDF upload interface
+- Dynamic paper cards
+- Editable literature comparison tables
+- PDF export functionality
+- Modular reusable React components
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the ESLint configuration
+# 🛠️ Frontend Tech Stack
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- React
+- Vite
+- React Router
+- Axios
+- Firebase Authentication
+- react-hot-toast
+
+---
+
+# 📂 Frontend Structure
+
+```text
+src/
+├── api/
+├── components/
+│   ├── UploadModal.jsx
+│   ├── PaperCard.jsx
+│   ├── PaperTable.jsx
+│   └── EmptyState.jsx
+├── contexts/
+├── firebase/
+├── pages/
+├── App.jsx
+└── main.jsx
+```
+
+---
+
+# ⚙️ Environment Variables
+
+Create a `.env` file inside `client/`
+
+```env
+VITE_BACKEND_API_URL=http://localhost:5000
+
+VITE_FIREBASE_API_KEY=your_firebase_api_key
+VITE_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
+VITE_FIREBASE_PROJECT_ID=your_project_id
+VITE_FIREBASE_STORAGE_BUCKET=your_storage_bucket
+VITE_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+VITE_FIREBASE_APP_ID=your_app_id
+```
+
+---
+
+# ▶️ Run Frontend
+
+```bash
+npm install
+npm run dev
+```
+
+---
+
+# 🔐 Authentication
+
+The frontend uses Firebase Google Authentication.
+
+- Logged-out users only see the login page
+- Logged-in users access the LitSync dashboard
+
+---
+
+# 📌 Future Improvements
+
+- AI-powered metadata autofill
+- Responsive design improvements
+- Better analytics dashboard
+- Semantic research search
+
+---
+
+# 👨‍💻 Author
+
+Soujanya Maharudra
