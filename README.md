@@ -66,7 +66,7 @@ Store and manage:
 - Cloudinary
 
 ---
-
+ // added toast message!
 # 📂 Project Structure
 
 ```text
