@@ -201,8 +201,14 @@ function FolderPage() {
   };
 
   const handleDelete = async (paperId) => {
-    await axios.delete(`${backendApi}/papers/${paperId}`);
-    setPapers((prev) => prev.filter((p) => p._id !== paperId));
+    try {
+      await axios.delete(`${backendApi}/papers/${paperId}`);
+      setPapers((prev) => prev.filter((p) => p._id !== paperId));
+      toast.success("Paper deleted");
+    } catch (err) {
+      setError(err?.response?.data?.message || err?.message || "Delete failed");
+      toast.error(err?.response?.data?.message || err?.message || "Delete failed");
+    }
   };
 
   const handleExportPdf = async () => {
