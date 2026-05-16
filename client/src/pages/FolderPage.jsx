@@ -7,6 +7,7 @@ import PaperTable from "../components/PaperTable";
 import { useAuth } from "../contexts/AuthContext";
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
+import { toast } from "react-hot-toast";
 
 function keywordsStringToArray(value) {
   if (value == null || typeof value !== "string") return [];
@@ -159,6 +160,7 @@ function FolderPage() {
         setPapers((prev) =>
           prev.map((paper) => (paper._id === editPaper._id ? res.data : paper))
         );
+        toast.success("Paper updated");
         clearUploadForm();
         return;
       }
@@ -188,9 +190,11 @@ function FolderPage() {
       const res = await axios.post(`${backendApi}/papers/upload`, formData);
 
       setPapers((prev) => [res.data, ...prev]);
+      toast.success("Upload successful");
       clearUploadForm();
     } catch (err) {
       setError(err?.response?.data?.message || err?.message || "Upload failed");
+      toast.error(err?.response?.data?.message || err?.message || "Upload failed");
     } finally {
       setUploading(false);
     }
