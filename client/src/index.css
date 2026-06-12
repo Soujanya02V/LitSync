@@ -229,7 +229,7 @@ textarea::placeholder {
   border-bottom: 2px solid var(--border);
   background-color: var(--surface);
   position: sticky;
-  top: 64px;
+  top: 0;
   z-index: 10;
   box-shadow: 0 1px 0 var(--border);
 }
