@@ -137,17 +137,17 @@ router.put("/:id", async (req, res) => {
       return res.status(400).json({ message: "Invalid paper id" });
     }
 
-    const update = {
-      authors: optionalTrimmedString(req.body?.authors),
-      year: optionalTrimmedString(req.body?.year),
-      summary: optionalTrimmedString(req.body?.summary),
-      methodology: optionalTrimmedString(req.body?.methodology),
-      advantages: optionalTrimmedString(req.body?.advantages),
-      disadvantages: optionalTrimmedString(req.body?.disadvantages),
-      limitations: optionalTrimmedString(req.body?.limitations),
-      futureScope: optionalTrimmedString(req.body?.futureScope),
-      keywords: parseKeywords(req.body?.keywords),
-    };
+    const update = {};
+    if (req.body.authors !== undefined) update.authors = optionalTrimmedString(req.body.authors);
+    if (req.body.year !== undefined) update.year = optionalTrimmedString(req.body.year);
+    if (req.body.summary !== undefined) update.summary = optionalTrimmedString(req.body.summary);
+    if (req.body.methodology !== undefined) update.methodology = optionalTrimmedString(req.body.methodology);
+    if (req.body.advantages !== undefined) update.advantages = optionalTrimmedString(req.body.advantages);
+    if (req.body.disadvantages !== undefined) update.disadvantages = optionalTrimmedString(req.body.disadvantages);
+    if (req.body.limitations !== undefined) update.limitations = optionalTrimmedString(req.body.limitations);
+    if (req.body.futureScope !== undefined) update.futureScope = optionalTrimmedString(req.body.futureScope);
+    if (req.body.keywords !== undefined) update.keywords = parseKeywords(req.body.keywords);
+
 
     const paper = await Paper.findByIdAndUpdate(id, update, {
       new: true,

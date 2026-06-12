@@ -92,6 +92,10 @@ function FolderPage() {
 
   useEffect(() => {
     if (!id || !currentUser?.uid) return;
+    setPapers([]);
+    setIsEditingTable(false);
+    setTableEdits({});
+    setExpandedPaper({});
     fetchPapers();
     fetchFolder();
   }, [id, currentUser?.uid]);
@@ -325,6 +329,17 @@ function FolderPage() {
     }
   };
 
+  const handleToggleTable = (targetVal) => {
+    setShowTable((prev) => {
+      const nextVal = typeof targetVal === "boolean" ? targetVal : !prev;
+      if (!nextVal) {
+        setIsEditingTable(false);
+        setTableEdits({});
+      }
+      return nextVal;
+    });
+  };
+
   const folderNameDisplay = folder?.name || "Loading Folder...";
 
   return (
@@ -387,7 +402,7 @@ function FolderPage() {
           
           {papers.length > 0 && (
             <button
-              onClick={() => setShowTable((prev) => !prev)}
+              onClick={() => handleToggleTable()}
               className="btn btn-secondary"
               style={{ padding: "10px 18px" }}
             >
@@ -504,7 +519,7 @@ function FolderPage() {
           isEditingTable={isEditingTable}
           tableEdits={tableEdits}
           onTableFieldChange={handleTableFieldChange}
-          onBack={() => setShowTable(false)}
+          onBack={() => handleToggleTable(false)}
           onExportPdf={handleExportPdf}
           onEditTableClick={() => {
             if (!isEditingTable) {
