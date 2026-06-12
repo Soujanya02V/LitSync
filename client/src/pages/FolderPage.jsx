@@ -8,6 +8,7 @@ import { useAuth } from "../contexts/AuthContext";
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
 import { toast } from "react-hot-toast";
+import EmptyState from "../components/EmptyState";
 
 function keywordsStringToArray(value) {
   if (value == null || typeof value !== "string") return [];
@@ -215,7 +216,6 @@ function FolderPage() {
     let folderName =
       folder?.name != null && String(folder.name).trim() !== "" ? String(folder.name).trim() : "";
 
-    // If user clicks export before folder loads, fetch it once.
     if (!folderName && id && currentUser?.uid) {
       try {
         const res = await axios.get(`${backendApi}/folders/${id}`, {
@@ -325,46 +325,119 @@ function FolderPage() {
     }
   };
 
+  const folderNameDisplay = folder?.name || "Loading Folder...";
+
   return (
     <div
       style={{
-        padding: "20px",
-        paddingTop: 56,
-        maxWidth: showTable ? "100%" : 640,
-        position: "relative",
+        padding: "40px 32px",
+        maxWidth: showTable ? "100%" : 800,
+        margin: "0 auto",
+        width: "100%",
+        boxSizing: "border-box",
+        textAlign: "left",
       }}
     >
-      <button
-        onClick={() => navigate("/")}
-        style={{ position: "absolute", top: 10, left: 10 }}
+      {/* Top Breadcrumb/Navigation & Actions Bar */}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginBottom: 32,
+          gap: 16,
+          flexWrap: "wrap",
+          borderBottom: "1px solid var(--border)",
+          paddingBottom: 20
+        }}
       >
-        Home
-      </button>
-  
+        <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 13, color: "var(--text-secondary)" }}>
+            <span
+              role="button"
+              tabIndex={0}
+              onClick={() => navigate("/")}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") navigate("/");
+              }}
+              style={{ cursor: "pointer", fontWeight: 500 }}
+              onMouseEnter={(e) => e.currentTarget.style.color = "var(--primary)"}
+              onMouseLeave={(e) => e.currentTarget.style.color = "var(--text-secondary)"}
+            >
+              Workspaces
+            </span>
+            <span>/</span>
+            <span style={{ fontWeight: 600, color: "var(--text)" }}>{folderNameDisplay}</span>
+          </div>
+
+          <h1 style={{ fontSize: 28, fontWeight: 800, color: "var(--text)", display: "flex", alignItems: "center", gap: 10 }}>
+            <span>📁</span>
+            {folderNameDisplay}
+          </h1>
+        </div>
+
+        <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
+          <button
+            onClick={handlePickFile}
+            className="btn btn-primary"
+            style={{ padding: "10px 18px" }}
+          >
+            <span>📤</span> Upload Paper
+          </button>
+          
+          {papers.length > 0 && (
+            <button
+              onClick={() => setShowTable((prev) => !prev)}
+              className="btn btn-secondary"
+              style={{ padding: "10px 18px" }}
+            >
+              {showTable ? "🗂️ Card View" : "📊 Table Comparison"}
+            </button>
+          )}
+        </div>
+      </div>
+
       <input
         ref={fileInputRef}
         type="file"
+        accept=".pdf"
         onChange={handleFileSelected}
         style={{ display: "none" }}
       />
-  
-      <button
-        onClick={handlePickFile}
-        style={{ position: "absolute", top: 10, right: 10 }}
-      >
-        Choose file
-      </button>
-      <button
-        onClick={() => setShowTable((prev) => !prev)}
-        style={{ position: "absolute", top: 48, right: 10 }}
-      >
-        {showTable ? "Show Cards" : "Table View"}
-      </button>
-  
-      <h1>Folder</h1>
-      <p>ID: {id}</p>
-      {loading ? <p style={{ color: "#475569" }}>Loading papers…</p> : null}
-      {error ? <p style={{ color: "crimson" }}>{error}</p> : null}
+
+      {loading && (
+        <div style={{ display: "flex", alignItems: "center", gap: 10, color: "var(--text-secondary)", margin: "20px 0" }}>
+          <div
+            style={{
+              width: 18,
+              height: 18,
+              border: "2px solid var(--border)",
+              borderTopColor: "var(--primary)",
+              borderRadius: "50%",
+              animation: "spin 0.8s linear infinite"
+            }}
+          />
+          <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+          <span>Loading papers…</span>
+        </div>
+      )}
+
+      {error && (
+        <div
+          style={{
+            padding: "12px 16px",
+            backgroundColor: "var(--danger-light)",
+            border: "1px solid rgba(239, 68, 68, 0.2)",
+            borderRadius: "var(--radius-sm)",
+            color: "var(--danger)",
+            fontSize: 14,
+            fontWeight: 500,
+            marginBottom: 24,
+          }}
+        >
+          {error}
+        </div>
+      )}
 
       <UploadModal
         showForm={showForm}
@@ -389,34 +462,43 @@ function FolderPage() {
         uploading={uploading}
         editPaper={editPaper}
         onUpload={performUpload}
+        onClose={clearUploadForm}
       />
 
-      {!showTable && (
-      <ul style={{ listStyle: "none", padding: 0 }}>
-        {papers.map((paper, index) => {
-          const key = paper._id || index;
-          const isExpanded = expandedPaper[key];
-  
-          return (
-            <PaperCard
-              key={key}
-              paper={paper}
-              isExpanded={isExpanded}
-              onToggleExpand={() =>
-                setExpandedPaper((prev) => ({
-                  ...prev,
-                  [key]: !prev[key],
-                }))
-              }
-              onEdit={handleEdit}
-              onDelete={handleDelete}
-            />
-          );
-        })}
-      </ul>
+      {!loading && papers.length === 0 && (
+        <EmptyState
+          title="No papers in this folder"
+          subtitle="Upload research papers (PDF) to auto-extract summary, methodology, advantages/disadvantages, and map them in a comparison grid."
+          icon="📄"
+        />
       )}
 
-      {showTable && (
+      {!showTable && papers.length > 0 && (
+        <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+          {papers.map((paper, index) => {
+            const key = paper._id || index;
+            const isExpanded = expandedPaper[key];
+
+            return (
+              <PaperCard
+                key={key}
+                paper={paper}
+                isExpanded={isExpanded}
+                onToggleExpand={() =>
+                  setExpandedPaper((prev) => ({
+                    ...prev,
+                    [key]: !prev[key],
+                  }))
+                }
+                onEdit={handleEdit}
+                onDelete={handleDelete}
+              />
+            );
+          })}
+        </ul>
+      )}
+
+      {showTable && papers.length > 0 && (
         <PaperTable
           papers={papers}
           isEditingTable={isEditingTable}
@@ -435,5 +517,6 @@ function FolderPage() {
       )}
     </div>
   );
-};
+}
+
 export default FolderPage;

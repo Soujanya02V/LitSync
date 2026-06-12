@@ -7,19 +7,33 @@ function EmptyState({ title, subtitle, icon }) {
         alignItems: "center",
         justifyContent: "center",
         textAlign: "center",
-        padding: "48px 24px",
+        padding: "56px 32px",
         margin: "24px 0",
-        borderRadius: 12,
-        background: "#f8fafc",
-        border: "1px dashed #e2e8f0",
+        borderRadius: "var(--radius-lg)",
+        background: "var(--surface)",
+        border: "2px dashed var(--border)",
+        boxShadow: "var(--shadow-sm)",
+        maxWidth: 480,
+        marginLeft: "auto",
+        marginRight: "auto",
+        boxSizing: "border-box",
       }}
     >
       {icon ? (
         <div
           style={{
-            fontSize: 40,
+            fontSize: 36,
             lineHeight: 1,
-            marginBottom: 16,
+            marginBottom: 20,
+            width: 72,
+            height: 72,
+            borderRadius: "50%",
+            background: "var(--bg)",
+            border: "1px solid var(--border)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            boxShadow: "var(--shadow-sm)",
           }}
           aria-hidden
         >
@@ -27,26 +41,25 @@ function EmptyState({ title, subtitle, icon }) {
         </div>
       ) : null}
 
-      <h2
+      <h3
         style={{
           margin: 0,
           fontSize: 18,
-          fontWeight: 600,
-          color: "#1e293b",
+          fontWeight: 700,
+          color: "var(--text)",
           letterSpacing: "-0.01em",
         }}
       >
         {title}
-      </h2>
+      </h3>
 
       {subtitle ? (
         <p
           style={{
-            margin: "8px 0 0",
-            maxWidth: 320,
+            margin: "10px 0 0",
             fontSize: 14,
-            lineHeight: 1.5,
-            color: "#64748b",
+            lineHeight: 1.6,
+            color: "var(--text-secondary)",
           }}
         >
           {subtitle}
