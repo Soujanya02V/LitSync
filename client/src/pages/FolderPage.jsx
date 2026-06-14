@@ -216,6 +216,23 @@ function FolderPage() {
     }
   };
 
+  const handleAutofill = async (paperId) => {
+    try {
+      const res = await axios.post(`${backendApi}/api/ai/generate/${paperId}`);
+      if (res.data?.success) {
+        toast.success("Metadata generated successfully");
+        setPapers((prev) =>
+          prev.map((paper) => (paper._id === paperId ? res.data.metadata : paper))
+        );
+      } else {
+        toast.error(res.data?.message || "Failed to generate metadata");
+      }
+    } catch (err) {
+      const errMsg = err?.response?.data?.message || err?.message || "Failed to generate metadata";
+      toast.error(errMsg);
+    }
+  };
+
   const handleExportPdf = async () => {
     let folderName =
       folder?.name != null && String(folder.name).trim() !== "" ? String(folder.name).trim() : "";
@@ -507,6 +524,7 @@ function FolderPage() {
                 }
                 onEdit={handleEdit}
                 onDelete={handleDelete}
+                onAutofill={handleAutofill}
               />
             );
           })}

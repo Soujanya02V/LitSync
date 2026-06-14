@@ -1,4 +1,17 @@
-function PaperCard({ paper, isExpanded, onToggleExpand, onEdit, onDelete }) {
+import { useState } from "react";
+
+function PaperCard({ paper, isExpanded, onToggleExpand, onEdit, onDelete, onAutofill }) {
+  const [isGenerating, setIsGenerating] = useState(false);
+
+  const handleAutofillClick = async () => {
+    if (isGenerating) return;
+    setIsGenerating(true);
+    try {
+      await onAutofill(paper._id);
+    } finally {
+      setIsGenerating(false);
+    }
+  };
   // Format keywords array to elements
   const renderKeywords = () => {
     if (!paper.keywords || !Array.isArray(paper.keywords) || paper.keywords.length === 0) {
@@ -103,19 +116,47 @@ function PaperCard({ paper, isExpanded, onToggleExpand, onEdit, onDelete }) {
           }}
         >
           {paper.fileUrl && (
-            <a
-              href={paper.fileUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="btn btn-secondary"
-              style={{
-                padding: "6px 12px",
-                fontSize: 13,
-                textDecoration: "none",
-              }}
-            >
-              <span>📄</span> Open PDF
-            </a>
+            <>
+              <a
+                href={paper.fileUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="btn btn-secondary"
+                style={{
+                  padding: "6px 12px",
+                  fontSize: 13,
+                  textDecoration: "none",
+                }}
+              >
+                <span>📄</span> Open PDF
+              </a>
+
+              <button
+                onClick={handleAutofillClick}
+                disabled={isGenerating}
+                className="btn"
+                style={{
+                  padding: "6px 12px",
+                  fontSize: 13,
+                  background: "linear-gradient(135deg, var(--accent) 0%, #a855f7 100%)",
+                  color: "white",
+                  border: "none",
+                  cursor: isGenerating ? "not-allowed" : "pointer",
+                  opacity: isGenerating ? 0.7 : 1,
+                  fontWeight: 600,
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 4,
+                  boxShadow: "0 2px 4px rgba(124, 58, 237, 0.15)",
+                }}
+              >
+                {isGenerating ? "Generating..." : (
+                  <>
+                    <span>✨</span> AI Autofill
+                  </>
+                )}
+              </button>
+            </>
           )}
 
           <button
