@@ -22,6 +22,8 @@ function UploadModal({
   editPaper,
   onUpload,
   onClose,
+  isGeneratingAI,
+  onGenerateAI,
 }) {
   if (!showForm) return null;
 
@@ -88,6 +90,34 @@ function UploadModal({
         </div>
 
         <div style={{ height: 1, backgroundColor: "var(--border)" }} />
+
+        {/* Generate using AI button */}
+        <button
+          type="button"
+          disabled={isGeneratingAI || uploading}
+          onClick={onGenerateAI}
+          className="btn"
+          style={{
+            padding: "10px 18px",
+            background: "linear-gradient(135deg, var(--accent) 0%, #a855f7 100%)",
+            color: "white",
+            border: "none",
+            cursor: (isGeneratingAI || uploading) ? "not-allowed" : "pointer",
+            fontWeight: 600,
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 8,
+            boxShadow: "0 2px 4px rgba(124, 58, 237, 0.15)",
+            opacity: (isGeneratingAI || uploading) ? 0.7 : 1,
+            alignSelf: "flex-start",
+          }}
+        >
+          {isGeneratingAI ? "Generating..." : (
+            <>
+              <span>✨</span> Generate Using AI
+            </>
+          )}
+        </button>
 
         {/* 2-Column Grid Layout */}
         <div

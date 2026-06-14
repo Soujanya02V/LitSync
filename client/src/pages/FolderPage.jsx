@@ -58,6 +58,7 @@ function FolderPage() {
   const [isEditingTable, setIsEditingTable] = useState(false);
   const [tableEdits, setTableEdits] = useState({});
   const [expandedPaper, setExpandedPaper] = useState({});
+  const [isGeneratingAI, setIsGeneratingAI] = useState(false);
 
   const fileInputRef = useRef(null);
 
@@ -216,20 +217,77 @@ function FolderPage() {
     }
   };
 
-  const handleAutofill = async (paperId) => {
+  const handleGenerateAI = async () => {
+    let paperIdToUse = editPaper?._id;
+
+    setIsGeneratingAI(true);
     try {
-      const res = await axios.post(`${backendApi}/api/ai/generate/${paperId}`);
-      if (res.data?.success) {
-        toast.success("Metadata generated successfully");
+      // 1. If not uploaded yet, perform the upload first
+      if (!paperIdToUse) {
+        if (!selectedFile) {
+          toast.error("Please select a file first");
+          return;
+        }
+        if (!currentUser?.uid) {
+          toast.error("Not signed in");
+          return;
+        }
+
+        const formData = new FormData();
+        formData.append("file", selectedFile);
+        formData.append("folderId", id);
+        formData.append("createdBy", currentUser.uid);
+
+        // Upload with empty/minimal metadata first
+        formData.append("authors", "");
+        formData.append("year", "");
+        formData.append("summary", "");
+        formData.append("methodology", "");
+        formData.append("advantages", "");
+        formData.append("disadvantages", "");
+        formData.append("limitations", "");
+        formData.append("futureScope", "");
+        formData.append("keywords", JSON.stringify([]));
+
+        const uploadRes = await axios.post(`${backendApi}/papers/upload`, formData);
+        const createdPaper = uploadRes.data;
+        
+        // Add to local papers list
+        setPapers((prev) => [createdPaper, ...prev]);
+        // Set as the current paper being edited
+        setEditPaper(createdPaper);
+        paperIdToUse = createdPaper._id;
+      }
+
+      // 2. Trigger AI metadata generation
+      const genRes = await axios.post(`${backendApi}/api/ai/generate/${paperIdToUse}`);
+      if (genRes.data?.success) {
+        const updatedPaper = genRes.data.metadata;
+        
+        // Populate fields in the form modal
+        setAuthors(updatedPaper.authors || "");
+        setYear(updatedPaper.year || "");
+        setSummary(updatedPaper.summary || "");
+        setMethodology(updatedPaper.methodology || "");
+        setAdvantages(updatedPaper.advantages || "");
+        setDisadvantages(updatedPaper.disadvantages || "");
+        setLimitations(updatedPaper.limitations || "");
+        setFutureScope(updatedPaper.futureScope || "");
+        setKeywords(formatKeywordsLine(updatedPaper));
+
+        // Update local papers state
         setPapers((prev) =>
-          prev.map((paper) => (paper._id === paperId ? res.data.metadata : paper))
+          prev.map((p) => (p._id === paperIdToUse ? updatedPaper : p))
         );
+        toast.success("Metadata generated successfully");
       } else {
-        toast.error(res.data?.message || "Failed to generate metadata");
+        toast.error(genRes.data?.message || "Failed to generate metadata");
       }
     } catch (err) {
       const errMsg = err?.response?.data?.message || err?.message || "Failed to generate metadata";
       toast.error(errMsg);
+    } finally {
+      setIsGeneratingAI(false);
     }
   };
 
@@ -495,6 +553,8 @@ function FolderPage() {
         editPaper={editPaper}
         onUpload={performUpload}
         onClose={clearUploadForm}
+        isGeneratingAI={isGeneratingAI}
+        onGenerateAI={handleGenerateAI}
       />
 
       {!loading && papers.length === 0 && (
@@ -524,7 +584,6 @@ function FolderPage() {
                 }
                 onEdit={handleEdit}
                 onDelete={handleDelete}
-                onAutofill={handleAutofill}
               />
             );
           })}
