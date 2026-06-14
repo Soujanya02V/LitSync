@@ -144,9 +144,12 @@ export const generateMetadata = async (req, res) => {
     const prompt = `
 Analyze this research paper.
 
-Return ONLY valid JSON.
-
+Return ONLY valid JSON matching this schema:
 {
+  "title": "",
+  "authors": "",
+  "year": "",
+  "keywords": [],
   "summary": "",
   "methodology": "",
   "advantages": "",
@@ -154,6 +157,8 @@ Return ONLY valid JSON.
   "limitations": "",
   "futureScope": ""
 }
+
+If any field (such as title, authors, year, keywords, summary, methodology, advantages, disadvantages, limitations, futureScope) cannot be confidently determined from the text, return an empty string (or an empty array for keywords). Do not hallucinate or invent information.
 
 Research Paper Text:
 ${truncatedText}
@@ -184,16 +189,37 @@ ${truncatedText}
     console.log("Groq successfully generated metadata.");
 
     // Update the Paper document in MongoDB
+    let authorsStr = "";
+    if (parsedJson.authors) {
+      if (Array.isArray(parsedJson.authors)) {
+        authorsStr = parsedJson.authors.map(String).map(s => s.trim()).filter(Boolean).join(", ");
+      } else if (typeof parsedJson.authors === "string") {
+        authorsStr = parsedJson.authors.trim();
+      } else {
+        authorsStr = String(parsedJson.authors).trim();
+      }
+    }
+
+    const updatePayload = {
+      authors: authorsStr,
+      year: parsedJson.year || "",
+      keywords: Array.isArray(parsedJson.keywords) ? parsedJson.keywords : [],
+      summary: parsedJson.summary || "",
+      methodology: parsedJson.methodology || "",
+      advantages: parsedJson.advantages || "",
+      disadvantages: parsedJson.disadvantages || "",
+      limitations: parsedJson.limitations || "",
+      futureScope: parsedJson.futureScope || ""
+    };
+
+    // Keep original title if AI fails to confidently extract a new title
+    if (parsedJson.title && parsedJson.title.trim() !== "") {
+      updatePayload.title = parsedJson.title.trim();
+    }
+
     const updatedPaper = await Paper.findByIdAndUpdate(
       paperId,
-      {
-        summary: parsedJson.summary || "",
-        methodology: parsedJson.methodology || "",
-        advantages: parsedJson.advantages || "",
-        disadvantages: parsedJson.disadvantages || "",
-        limitations: parsedJson.limitations || "",
-        futureScope: parsedJson.futureScope || ""
-      },
+      updatePayload,
       { new: true, runValidators: true }
     );
 
