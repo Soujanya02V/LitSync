@@ -183,9 +183,33 @@ ${truncatedText}
 
     console.log("Groq successfully generated metadata.");
 
+    // Update the Paper document in MongoDB
+    const updatedPaper = await Paper.findByIdAndUpdate(
+      paperId,
+      {
+        summary: parsedJson.summary || "",
+        methodology: parsedJson.methodology || "",
+        advantages: parsedJson.advantages || "",
+        disadvantages: parsedJson.disadvantages || "",
+        limitations: parsedJson.limitations || "",
+        futureScope: parsedJson.futureScope || ""
+      },
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedPaper) {
+      return res.status(404).json({
+        success: false,
+        message: "Paper not found during update"
+      });
+    }
+
+    console.log("Metadata generated and saved successfully into MongoDB.");
+
     return res.status(200).json({
       success: true,
-      metadata: parsedJson
+      message: "Metadata generated and saved successfully",
+      metadata: updatedPaper
     });
   } catch (err) {
     console.error("Error in generateMetadata controller:", err);
