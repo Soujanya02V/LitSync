@@ -26,7 +26,8 @@ app.use("/papers", paperRoutes);
 app.use("/api/ai", aiRoutes);
 
 const PORT = process.env.PORT || 5000;
-
+//console.log("Gemini Key Exists:", !!process.env.GOOGLE_AI_API_KEY);
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
+
 });
