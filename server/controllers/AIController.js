@@ -126,7 +126,7 @@ export const generateMetadata = async (req, res) => {
     const text = data.text || "";
     await parser.destroy();
 
-    const truncatedText = text.substring(0, 10000);
+    const truncatedText = text.substring(0, 20000);
     console.log("Original Length:", text.length);
     console.log("Sent To Groq:", truncatedText.length);
 
