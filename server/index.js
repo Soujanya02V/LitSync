@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import mongoose from "mongoose";
 import folderRoutes from "./Routes/folderRoutes.js";
 import paperRoutes from "./Routes/PaperRoutes.js";
+import aiRoutes from "./Routes/AIRoutes.js";
 dotenv.config();
 // console.log("Cloudinary ready:", cloudinary.config().cloud_name);
 mongoose
@@ -22,6 +23,7 @@ app.get("/", (req, res) => {
 
 app.use("/folders", folderRoutes);
 app.use("/papers", paperRoutes);
+app.use("/api/ai", aiRoutes);
 
 const PORT = process.env.PORT || 5000;
 
