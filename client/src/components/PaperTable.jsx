@@ -1,5 +1,3 @@
-import { useRef, useState, useEffect } from "react";
-
 function paperRowKey(paper, index) {
   return paper._id != null ? String(paper._id) : `paper-${index}`;
 }
@@ -13,14 +11,6 @@ function PaperTable({
   onExportPdf,
   onEditTableClick,
 }) {
-  const tbodyRef = useRef(null);
-  const [renderedRowsCount, setRenderedRowsCount] = useState(0);
-
-  useEffect(() => {
-    if (tbodyRef.current) {
-      setRenderedRowsCount(tbodyRef.current.querySelectorAll("tr").length);
-    }
-  }, [papers]);
 
   return (
     <div style={{ marginTop: 24 }}>
@@ -63,9 +53,8 @@ function PaperTable({
         </div>
       </div>
 
-      <div style={{ marginBottom: 16, display: "flex", gap: 20, fontSize: 14, color: "var(--text-secondary)", fontWeight: 500 }}>
-        <div>Papers in folder: {papers.length}</div>
-        <div>Rows rendered: {renderedRowsCount}</div>
+      <div style={{ marginBottom: 16, fontSize: 14, color: "var(--text-secondary)", fontWeight: 500 }}>
+        Total Papers: {papers.length}
       </div>
 
       <div
@@ -89,7 +78,7 @@ function PaperTable({
               <th style={{ minWidth: 220 }}>Future Scope</th>
             </tr>
           </thead>
-          <tbody ref={tbodyRef}>
+          <tbody>
             {papers.map((paper, index) => (
               <tr key={paperRowKey(paper, index)}>
                 <td style={{ fontWeight: 600 }}>{paper.title || ""}</td>

@@ -44,7 +44,41 @@ function Header() {
             gap: 6
           }}
         >
-          <span style={{ fontSize: 24 }}>🎓</span>
+          <div
+            style={{
+              width: 32,
+              height: 32,
+              borderRadius: "var(--radius-sm)",
+              background: "var(--primary-light)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              border: "1px solid rgba(37, 99, 235, 0.1)",
+              boxShadow: "var(--shadow-sm)",
+            }}
+          >
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 512 512"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <defs>
+                <linearGradient id="headerLogoDocGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#2563EB" />
+                  <stop offset="100%" stop-color="#7C3AED" />
+                </linearGradient>
+                <linearGradient id="headerLogoAiGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#FFFFFF" />
+                  <stop offset="100%" stop-color="#E0F2FE" />
+                </linearGradient>
+              </defs>
+              <path d="M 128 80 C 128 57.9 145.9 40 168 40 H 296 L 384 128 V 432 C 384 454.1 366.1 472 344 472 H 168 C 145.9 472 128 454.1 128 432 V 80 Z" fill="url(#headerLogoDocGrad)"/>
+              <path d="M 296 40 V 104 C 296 117.3 306.7 128 320 128 H 384 L 296 40 Z" fill="#FFFFFF" fill-opacity="0.2" />
+              <path d="M 256 150 C 256 208.5 297.5 250 356 250 C 297.5 250 256 291.5 256 350 C 256 291.5 214.5 250 156 250 C 214.5 250 256 208.5 256 150 Z" fill="url(#headerLogoAiGrad)"/>
+            </svg>
+          </div>
           LitSync
         </Link>
         <span

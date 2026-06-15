@@ -559,9 +559,25 @@ function FolderPage() {
 
       {!loading && papers.length === 0 && (
         <EmptyState
-          title="No papers in this folder"
-          subtitle="Upload research papers (PDF) to auto-extract summary, methodology, advantages/disadvantages, and map them in a comparison grid."
-          icon="📄"
+          title="No papers uploaded yet."
+          subtitle="Upload your first research paper to start building your literature survey."
+          icon={
+            <svg
+              width="40"
+              height="40"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="var(--primary)"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
+              <polyline points="14 2 14 8 20 8" />
+              <path d="M12 18v-6" />
+              <polyline points="9 15 12 12 15 15" />
+            </svg>
+          }
         />
       )}
 
