@@ -1,5 +1,6 @@
 import { signInWithPopup } from "firebase/auth";
 import { auth, provider } from "../firebase/firebase";
+import Footer from "../components/Footer";
 
 function Login() {
   const handleGoogleLogin = async () => {
@@ -204,27 +205,15 @@ function Login() {
       <div style={{ flex: 1 }} />
 
       {/* Login Footer */}
-      <footer
+      <Footer
         style={{
-          textAlign: "center",
-          display: "flex",
-          flexDirection: "column",
-          gap: 6,
-          color: "var(--text-secondary)",
-          fontSize: 13,
-          fontWeight: 500,
-          borderTop: "1px solid var(--border)",
-          width: "100%",
           maxWidth: 420,
+          backgroundColor: "transparent",
+          borderTop: "1px solid var(--border)",
           paddingTop: 16,
-          boxSizing: "border-box",
+          marginTop: "auto"
         }}
-      >
-        <div>LitSync • AI-Powered Literature Review Assistant</div>
-        <div style={{ fontSize: 11, opacity: 0.75 }}>
-          Built for Researchers, Students, and Innovators
-        </div>
-      </footer>
+      />
     </div>
   );
 }

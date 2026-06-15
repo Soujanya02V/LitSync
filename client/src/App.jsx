@@ -6,6 +6,8 @@ import Home from "./pages/Home";
 import FolderPage from "./pages/FolderPage";
 import Login from "./pages/Login";
 
+import Footer from "./components/Footer";
+
 function App() {
   const { currentUser } = useAuth();
 
@@ -28,20 +30,7 @@ function App() {
             <Route path="/folder/:id" element={<FolderPage />} />
           </Routes>
         </main>
-        <footer
-          style={{
-            padding: "16px 24px",
-            textAlign: "center",
-            fontSize: 12,
-            color: "var(--text-secondary)",
-            borderTop: "1px solid var(--border)",
-            backgroundColor: "var(--surface)",
-            marginTop: "auto",
-            fontWeight: 500,
-          }}
-        >
-          © 2026 LitSync • AI-Powered Literature Review Assistant
-        </footer>
+        <Footer />
       </div>
     </Router>
   );
