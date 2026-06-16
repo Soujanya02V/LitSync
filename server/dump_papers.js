@@ -1,5 +1,8 @@
 import mongoose from 'mongoose';
-const MONGO_URI = "mongodb+srv://Soujanya:LitSync@cluster0.5wdzcpf.mongodb.net/?appName=Cluster0";
+import dotenv from 'dotenv';
+dotenv.config();
+
+const MONGO_URI = process.env.MONGO_URI;
 
 const paperSchema = new mongoose.Schema({
   title: String,
