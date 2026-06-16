@@ -2,6 +2,8 @@
 
 ### AI-Powered Literature Review Assistant
 
+**Live Link:** [https://litsync-3m78.onrender.com/](https://litsync-3m78.onrender.com/)
+
 LitSync helps researchers, students, and developers organize research papers, generate literature survey metadata automatically, and compare papers in a structured format.
 
 ---
